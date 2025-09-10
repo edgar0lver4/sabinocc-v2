@@ -1,0 +1,81 @@
+# Basic configuration for ProGuard to optimize, obfuscate, and shrink the code
+-optimizationpasses 5
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-verbose
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+
+# Keep public and protected class members
+-keep public class * {
+    public protected *;
+}
+
+# Keep the names of all annotated methods and fields
+-keepattributes *Annotation*
+
+# Keep attributes that are used for reflection
+-keepclassmembers class * {
+    @**.** *;
+}
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+# Keep the main application class
+-keep class com.yourpackage.YourMainActivity {
+    public static void main(java.lang.String[]);
+}
+
+# Keep all Activities, Services, BroadcastReceivers, and ContentProviders
+-keep class * extends android.app.Activity
+-keep class * extends android.app.Service
+-keep class * extends android.content.BroadcastReceiver
+-keep class * extends android.content.ContentProvider
+
+# Keep classes with native methods
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# Keep Serializable classes - required for Gson serialization
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
+# Keep classes for library (adjust to your specific libraries)
+-keep class com.google.gson.** { *; }
+-keep class com.squareup.retrofit2.** { *; }
+
+# If you are using Room for database, keep its classes
+-keepclassmembers class * {
+    @androidx.room.* <fields>;
+}
+-keep @androidx.room.* class * { *; }
+
+# Remove logging code
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int i(...);
+    public static int w(...);
+    public static int d(...);
+    public static int e(...);
+}
+
+# Keep Timber logging
+-assumenosideeffects class timber.log.Timber {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int i(...);
+    public static int w(...);
+    public static int d(...);
+    public static int e(...);
+    public static int wtf(...);
+}
