@@ -4,8 +4,12 @@ import { style } from './style';
 import { memo } from 'react';
 
 const Day = ({ date, isToday, isSelected, disabled, onPress }: Props) => {
-  const styleTextDisabled = disabled ? style.textDisabled : style.textDay;
-  const styleTextToday = isToday ? style.textToday : styleTextDisabled;
+  const styleTodayDisabled =
+    isToday && disabled ? style.textTodayDisabled : style.textDay;
+  const styleTextDisabled =
+    disabled && !isToday ? style.textDisabled : styleTodayDisabled;
+  const styleTextToday =
+    isToday && !disabled ? style.textToday : styleTextDisabled;
   const styleText = isSelected ? style.textSelected : styleTextToday;
   const styleContainer = isSelected ? style.containerSelected : style.container;
   return (

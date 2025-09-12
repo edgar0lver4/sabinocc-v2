@@ -17,6 +17,7 @@ import GlobalLoader from './src/components/globalLoader';
 import ModalErrors from './src/components/modal.errors';
 import { NewtworkInformation } from './src/components/NetworkInformation';
 import { configure } from 'react-native-crisp-chat-sdk';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 function App(): React.JSX.Element {
   const [showModal, setShowModal] = useState(false);
@@ -63,9 +64,15 @@ function App(): React.JSX.Element {
     return () => clearInterval(unsubscribe);
   });
   return (
-    <PaperProvider>
-      <Provider store={store}>
-        <NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PaperProvider>
+        <Provider store={store}>
+          <NavigationContainer>
+            <ModalErrors />
+            <GlobalLoader />
+            <AppRoutes />
+            <NewtworkInformation />
+          </NavigationContainer>
           <Portal>
             <Modal visible={showModal} contentContainerStyle={style.modal}>
               <Text style={style.title}>Sesión expirada</Text>
@@ -82,13 +89,9 @@ function App(): React.JSX.Element {
               </Button>
             </Modal>
           </Portal>
-          <ModalErrors />
-          <GlobalLoader />
-          <AppRoutes />
-          <NewtworkInformation />
-        </NavigationContainer>
-      </Provider>
-    </PaperProvider>
+        </Provider>
+      </PaperProvider>
+    </GestureHandlerRootView>
   );
 }
 

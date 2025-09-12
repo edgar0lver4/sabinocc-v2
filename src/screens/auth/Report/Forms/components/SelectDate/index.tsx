@@ -32,8 +32,6 @@ export const SelectDate = ({
     return datesDisabled?.map(itm => itm?.date) || [];
   }, [datesDisabled]);
 
-  console.log('listDateDisabled:', listDateDisabled);
-
   const optionsRef = useRef<BottomSheetModal>(null);
   const TODAY = dayjs().format('YYYY-MM-DD');
 

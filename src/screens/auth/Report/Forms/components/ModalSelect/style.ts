@@ -54,5 +54,6 @@ export const style = StyleSheet.create({
     flexDirection: 'column',
     borderRadius: 8,
     padding: 16,
+    maxHeight: 300,
   },
 });

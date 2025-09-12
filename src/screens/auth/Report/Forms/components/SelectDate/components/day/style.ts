@@ -23,7 +23,14 @@ export const style = StyleSheet.create({
   textDay: {
     lineHeight: 22.16,
     fontSize: 16,
+    fontWeight: '600',
     color: BLUE_DARK,
+  },
+  textTodayDisabled: {
+    lineHeight: 22.16,
+    fontSize: 16,
+    color: STEEL_20,
+    fontWeight: '600',
   },
   textToday: {
     lineHeight: 22.16,
