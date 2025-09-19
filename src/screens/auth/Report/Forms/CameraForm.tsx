@@ -1,11 +1,13 @@
 import { useRef, useState } from 'react';
-import { Button, Platform, View } from 'react-native';
-import { Camera, CameraApi, CameraType } from 'react-native-camera-kit';
+import { View } from 'react-native';
 import { styles } from './style';
 import { FromCamera } from './types';
 import { useModalError } from '../../../../hooks/useModalError';
-import { Text } from 'react-native-paper';
+import { Portal, Text } from 'react-native-paper';
 import CapturedView from './components/CapturedView';
+import { Camera, useCameraDevice } from 'react-native-vision-camera';
+import Button from '../../../../components/buttons';
+import { STEEL_WHITE } from '../../../../styles/colors';
 
 export const CameraForm = ({
   showCamera,
@@ -13,11 +15,13 @@ export const CameraForm = ({
   confirm,
   retake,
 }: FromCamera) => {
+  const device = useCameraDevice('back');
+
   const [processingImage, setProcessingImage] = useState(false);
   const [tempImage, setTempImage] = useState<string | undefined>('');
   const [showPreview, setShowPreview] = useState(false);
   const { showModalError } = useModalError();
-  const cameraRef = useRef<CameraApi>(null);
+  const cameraRef = useRef<Camera>(null);
 
   const takePhoto = async () => {
     setProcessingImage(true);
@@ -28,9 +32,10 @@ export const CameraForm = ({
         showModalError(message);
         return;
       }
-      const photo = await cameraRef.current.capture();
+      const photo = await cameraRef.current.takePhoto();
       if (photo) {
-        const uri = Platform.OS === 'ios' ? photo.path : `file://${photo.path}`;
+        const path = photo?.path ?? '';
+        const uri = path.startsWith('file://') ? path : `file://${path}`;
         setTempImage(uri);
         setShowPreview(true);
       } else {
@@ -54,31 +59,39 @@ export const CameraForm = ({
     retake();
   };
 
-  if (!showCamera) return null;
+  if (!showCamera || !device) return null;
   return (
-    <View style={styles.cameraContainer}>
-      <Camera
-        ref={cameraRef}
-        style={styles.camera}
-        cameraType={CameraType.Back}
-        flashMode="auto"
-      />
-      {!showPreview && (
-        <View style={styles.cameraBtnContainer}>
-          {!processingImage ? (
-            <Button title="Tomar foto" onPress={takePhoto} />
-          ) : (
-            <Text style={styles.description}>Cargando foto</Text>
-          )}
-        </View>
-      )}
-      {showPreview && (
-        <CapturedView
-          capturedPhoto={tempImage}
-          confirm={handleConfirm}
-          retake={handleRetake}
+    <Portal>
+      <View style={styles.cameraContainer}>
+        <Camera
+          ref={cameraRef}
+          style={styles.camera}
+          photo={true}
+          device={device}
+          isActive
         />
-      )}
-    </View>
+        {!showPreview && (
+          <View style={styles.cameraBtnContainer}>
+            {!processingImage ? (
+              <Button.Icon
+                colorIcon={STEEL_WHITE}
+                iconSize={40}
+                onPress={takePhoto}
+                name="camera"
+              />
+            ) : (
+              <Text style={styles.description}>Cargando foto</Text>
+            )}
+          </View>
+        )}
+        {showPreview && (
+          <CapturedView
+            capturedPhoto={tempImage}
+            confirm={handleConfirm}
+            retake={handleRetake}
+          />
+        )}
+      </View>
+    </Portal>
   );
 };

@@ -1,6 +1,6 @@
 import { RefObject, useState } from 'react';
 import { Alert, PermissionsAndroid, Platform } from 'react-native';
-import { CameraApi } from 'react-native-camera-kit';
+import { Camera } from 'react-native-vision-camera';
 import { useModalError } from '../../../hooks/useModalError';
 import RNFS from 'react-native-fs';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
@@ -61,7 +61,7 @@ export const useCameraController = () => {
   };
 
   const takePhoto = async (
-    cameraRef: RefObject<CameraApi | null>,
+    cameraRef: RefObject<Camera | null>,
   ): Promise<string | undefined> => {
     try {
       if (cameraRef.current !== null) {
@@ -70,10 +70,10 @@ export const useCameraController = () => {
             'No se encontro la camara en el dispositivo ' + cameraRef;
           showModalError(message);
         }
-        const photo = await cameraRef.current.capture();
+        const photo = await cameraRef.current.takePhoto();
         if (photo) {
-          const uri =
-            Platform.OS === 'ios' ? photo.path : `file://${photo.path}`;
+          const path = photo?.path ?? '';
+          const uri = path.startsWith('file://') ? path : `file://${path}`;
           return uri;
         } else {
           showModalError('No se encontro la ruta de la foto');

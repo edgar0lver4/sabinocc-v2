@@ -45,9 +45,9 @@ const ReportForm = ({ formik, listDates, handleActiveOptions }: FormReport) => {
         onChangeText={formik.handleChange('descripcion')}
         onBlur={formik.handleBlur('descripcion')}
       />
-      {3 - Object.keys(daysMarket).length !== 0 ? (
+      {1 - Object.keys(daysMarket).length !== 0 ? (
         <Text style={styles.description}>
-          Seleccione {3 - Object.keys(daysMarket).length} fechas para la
+          Seleccione {1 - Object.keys(daysMarket).length} fechas para la
           revisión
         </Text>
       ) : (
@@ -59,23 +59,7 @@ const ReportForm = ({ formik, listDates, handleActiveOptions }: FormReport) => {
         title="Seleccione una fecha"
         onConfirm={val => handleSetValue(val, 'horario_cliente_1')}
         value={dateT1}
-        style={{ marginTop: 16 }}
-        listDates={listDates}
-        datesDisabled={listDisabled}
-      />
-      <SelectDate
-        title="Seleccione una fecha"
-        onConfirm={val => handleSetValue(val, 'horario_cliente_2')}
-        value={dateT2}
-        style={{ marginTop: 16 }}
-        listDates={listDates}
-        datesDisabled={listDisabled}
-      />
-      <SelectDate
-        title="Seleccione una fecha"
-        onConfirm={val => handleSetValue(val, 'horario_cliente_3')}
-        value={dateT3}
-        style={{ marginTop: 16 }}
+        style={{ marginTop: 16, marginBottom: 16 }}
         listDates={listDates}
         datesDisabled={listDisabled}
       />

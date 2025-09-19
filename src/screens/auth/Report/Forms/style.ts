@@ -13,8 +13,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
   },
   cameraContainer: {
-    flex: 1,
-    position: 'absolute',
+    position: 'relative',
     top: 0,
     bottom: 0,
     height: '100%',
@@ -28,10 +27,12 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     paddingVertical: 16,
+    paddingBottom: 32,
     backgroundColor: '#000',
     opacity: 0.7,
   },
   camera: {
     flex: 1,
+    backgroundColor: '#000',
   },
 });

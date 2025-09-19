@@ -1,19 +1,25 @@
 import { useRef, useState } from 'react';
-import { Camera, CameraApi, CameraType } from 'react-native-camera-kit';
-import { Button, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import CapturedView from '../../screens/auth/Report/Forms/components/CapturedView';
 import { styles } from './styles';
 import { CameraBtn } from '../../screens/auth/Report/Forms/components/Buttons/CameraBtn';
 import { useCameraController } from './hooks/useCameraController';
 import { Props } from './types';
+import { Portal } from 'react-native-paper';
+import { Camera, useCameraDevice } from 'react-native-vision-camera';
+import { STEEL_WHITE } from '../../styles/colors';
+import Button from '../buttons';
 
 const CameraFlux = ({ onConfirm }: Props) => {
   const [processingImage, setProcessingImage] = useState(false);
   const [tempImage, setTempImage] = useState<string | undefined>('');
   const [showPreview, setShowPreview] = useState(false);
-  const cameraRef = useRef<CameraApi>(null);
+  const cameraRef = useRef<Camera>(null);
   const { showCamera, checkPermissions, takePhoto, setShowCamera, confirm } =
     useCameraController();
+
+  const device = useCameraDevice('back');
+
   const handleTake = async () => {
     setProcessingImage(true);
     const uri = await takePhoto(cameraRef);
@@ -42,31 +48,40 @@ const CameraFlux = ({ onConfirm }: Props) => {
     return (
       <CameraBtn onPress={checkPermissions} style={{ marginHorizontal: 16 }} />
     );
+  if (!device) return <></>;
   return (
-    <View style={styles.cameraContainer}>
-      <Camera
-        ref={cameraRef}
-        style={styles.camera}
-        cameraType={CameraType.Back}
-        flashMode="auto"
-      />
-      {!showPreview && (
-        <View style={styles.cameraBtnContainer}>
-          {!processingImage ? (
-            <Button title="Tomar foto" onPress={handleTake} />
-          ) : (
-            <Text style={styles.description}>Cargando foto</Text>
-          )}
-        </View>
-      )}
-      {showPreview && (
-        <CapturedView
-          capturedPhoto={tempImage}
-          confirm={handleConfirm}
-          retake={handleRetake}
+    <Portal>
+      <View style={styles.cameraContainer}>
+        <Camera
+          ref={cameraRef}
+          style={styles.camera}
+          photo={true}
+          device={device}
+          isActive
         />
-      )}
-    </View>
+        {!showPreview && (
+          <View style={styles.cameraBtnContainer}>
+            {!processingImage ? (
+              <Button.Icon
+                colorIcon={STEEL_WHITE}
+                iconSize={40}
+                onPress={handleTake}
+                name="camera"
+              />
+            ) : (
+              <Text style={styles.description}>Cargando foto</Text>
+            )}
+          </View>
+        )}
+        {showPreview && (
+          <CapturedView
+            capturedPhoto={tempImage}
+            confirm={handleConfirm}
+            retake={handleRetake}
+          />
+        )}
+      </View>
+    </Portal>
   );
 };
 
