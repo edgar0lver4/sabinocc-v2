@@ -18,9 +18,13 @@ import ModalErrors from './src/components/modal.errors';
 import { NewtworkInformation } from './src/components/NetworkInformation';
 import { configure } from 'react-native-crisp-chat-sdk';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import notifee, { AndroidImportance } from '@notifee/react-native';
+import { ChannelIds, ChannelNames } from './src/core/notifications/enums';
+import { usePushNotifications } from './src/hooks/notification/usePushNotifications';
 
 function App(): React.JSX.Element {
   const [showModal, setShowModal] = useState(false);
+  const { tokenPhone } = usePushNotifications();
 
   const initApp = useCallback(async () => {
     try {
@@ -43,6 +47,8 @@ function App(): React.JSX.Element {
     }
   }, []);
 
+  console.log('tokenPhone:', tokenPhone);
+
   const handleClear = async () => {
     await storage.remove({ key: EStorage.login });
     setShowModal(false);
@@ -63,6 +69,15 @@ function App(): React.JSX.Element {
 
     return () => clearInterval(unsubscribe);
   });
+
+  useEffect(() => {
+    notifee.createChannel({
+      id: ChannelIds.NOTIFICATION,
+      name: ChannelNames.NOTIFICATION,
+      importance: AndroidImportance.HIGH,
+    });
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider>

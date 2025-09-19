@@ -4,7 +4,7 @@ import { Camera, CameraApi, CameraType } from 'react-native-camera-kit';
 import { styles } from './style';
 import { FromCamera } from './types';
 import { useModalError } from '../../../../hooks/useModalError';
-import { Text } from 'react-native-paper';
+import { Portal, Text } from 'react-native-paper';
 import CapturedView from './components/CapturedView';
 
 export const CameraForm = ({
@@ -30,7 +30,8 @@ export const CameraForm = ({
       }
       const photo = await cameraRef.current.capture();
       if (photo) {
-        const uri = Platform.OS === 'ios' ? photo.path : `file://${photo.path}`;
+        const path = photo?.path ?? '';
+        const uri = path.startsWith('file://') ? path : `file://${path}`;
         setTempImage(uri);
         setShowPreview(true);
       } else {
@@ -56,29 +57,31 @@ export const CameraForm = ({
 
   if (!showCamera) return null;
   return (
-    <View style={styles.cameraContainer}>
-      <Camera
-        ref={cameraRef}
-        style={styles.camera}
-        cameraType={CameraType.Back}
-        flashMode="auto"
-      />
-      {!showPreview && (
-        <View style={styles.cameraBtnContainer}>
-          {!processingImage ? (
-            <Button title="Tomar foto" onPress={takePhoto} />
-          ) : (
-            <Text style={styles.description}>Cargando foto</Text>
-          )}
-        </View>
-      )}
-      {showPreview && (
-        <CapturedView
-          capturedPhoto={tempImage}
-          confirm={handleConfirm}
-          retake={handleRetake}
+    <Portal>
+      <View style={styles.cameraContainer}>
+        <Camera
+          ref={cameraRef}
+          style={styles.camera}
+          cameraType={CameraType.Back}
+          flashMode="auto"
         />
-      )}
-    </View>
+        {!showPreview && (
+          <View style={styles.cameraBtnContainer}>
+            {!processingImage ? (
+              <Button title="Tomar foto" onPress={takePhoto} />
+            ) : (
+              <Text style={styles.description}>Cargando foto</Text>
+            )}
+          </View>
+        )}
+        {showPreview && (
+          <CapturedView
+            capturedPhoto={tempImage}
+            confirm={handleConfirm}
+            retake={handleRetake}
+          />
+        )}
+      </View>
+    </Portal>
   );
 };
