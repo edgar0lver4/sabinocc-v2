@@ -90,7 +90,8 @@ android {
         }
         externalNativeBuild {
             cmake {
-                cppFlags "-DANDROID_LD_USE_16K_PAGES=1"
+                cppFlags ""
+                arguments "-DANDROID_LD_USE_16K_PAGES=1"
             }
         }
     }

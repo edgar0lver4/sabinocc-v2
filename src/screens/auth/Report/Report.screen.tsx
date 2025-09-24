@@ -150,11 +150,9 @@ const ReportScreen = ({ navigation: { navigate } }: any) => {
   const isSelectedDates = (): boolean => {
     const val = formik.values;
     const hor1 = val.horario_cliente_1 !== '';
-    const hor2 = val.horario_cliente_2 !== '';
-    const hor3 = val.horario_cliente_3 !== '';
 
     if (!showCalendar) return true;
-    return hor1 && hor2 && hor3;
+    return hor1;
   };
 
   const isCompleteForm = (): boolean => {

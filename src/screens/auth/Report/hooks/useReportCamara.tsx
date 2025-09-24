@@ -104,7 +104,7 @@ export const useReportCamara = (formik: FormikProps<TFormikReport>) => {
         console.log('Error in save image:', e);
       }
     } else {
-      showModalError('Error al tomar la foto, por vaor vuelva a intentarlo');
+      showModalError('Error al tomar la foto, por favor vuelva a intentarlo');
     }
   };
 

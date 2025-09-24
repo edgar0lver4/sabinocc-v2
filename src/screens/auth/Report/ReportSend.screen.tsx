@@ -12,7 +12,7 @@ const ReportSendedScreen = ({ navigation: { navigate } }: any) => {
   return (
     <SafeAreaView style={style.container}>
       <Text style={style.title}>Su reporte se ha enviado</Text>
-      <View style={{ height: '90%' }}>
+      <View style={{ height: '80%' }}>
         <Lottie source={ANIMATION} autoPlay style={{ flex: 1 }} />
       </View>
       <View style={Platform.OS === 'ios' && { marginHorizontal: 16 }}>
