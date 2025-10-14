@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "83919123600",
+    "project_id": "sabinocc-test",
+    "storage_bucket": "sabinocc-test.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:83919123600:android:55c186bb29cdbf055ad415",
+        "android_client_info": {
+          "package_name": "com.sabinoproyect.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7zJryufyWKI7v2tCN0iJMWDkYH6FbdC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

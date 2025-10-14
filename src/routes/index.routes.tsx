@@ -31,6 +31,7 @@ import ListProyectsScreen from '../screens/auth/Operator/ListProyects';
 import ListPropertiesScreen from '../screens/auth/Operator/ListProperties';
 import ProfileOperatorScreen from '../screens/auth/Operator/ProfileOperator';
 import TicketOperatorScreen from '../screens/auth/Operator/TicketOperator';
+import { usePushNotifications } from '../hooks/notification/usePushNotifications';
 
 const Stack = createStackNavigator();
 
@@ -209,6 +210,7 @@ const AuthRoutes = () => {
 
 const AppRoutes = () => {
   const [isAuthenticate, setIsAuthenticate] = useState(false);
+  usePushNotifications();
 
   const sessionStore = useAppSelector(itm => itm.session);
 

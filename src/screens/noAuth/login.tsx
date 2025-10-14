@@ -30,6 +30,7 @@ import ANIMATION from '../../animations/loading_dots.json';
 import { getConfigurations } from '../../services/config/service';
 import { useModalError } from '../../hooks/useModalError';
 import { UserType } from '../../core/users/enum';
+import { usePushNotifications } from '../../hooks/notification/usePushNotifications';
 
 const LoginScreen = ({ navigation }: any) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +38,7 @@ const LoginScreen = ({ navigation }: any) => {
   const [showFade, setShowFade] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const { showModalError } = useModalError();
+  const { tokenPhone } = usePushNotifications();
 
   const dispatch = useAppDispatch();
   // URL de la imagen de fondo
@@ -56,7 +58,7 @@ const LoginScreen = ({ navigation }: any) => {
   const handleSubmit = async (e: typeof INITAL_VALUES) => {
     setIsLoading(true);
     Keyboard.dismiss();
-    const response = await loginService(e);
+    const response = await loginService(e, tokenPhone);
     if (response) {
       const properties: Property[] = response.propiedades;
       const body = {

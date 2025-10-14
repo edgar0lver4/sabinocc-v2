@@ -2,12 +2,13 @@ import FetchPetition from '..';
 import store from '../../redux';
 import { POSTSELLS_URL, USERS_URL } from '../../utils/urls';
 
-export const loginService = async (body: any) => {
+export const loginService = async (body: any, token?: string) => {
+  const payload = { ...body, token_disp: token };
   try {
     const fetching = new FetchPetition(undefined, true);
     const petition: any = await fetching.post(
       `${USERS_URL}/ValidateUser`,
-      body,
+      payload,
     );
     if (petition.status === 200) {
       const response = await petition.json();
