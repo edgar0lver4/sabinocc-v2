@@ -30,7 +30,7 @@
     "jwt-decode": "^4.0.0",
     "lottie-react-native": "^7.3.2",
     "react": "19.1.0",
-    "react-native": "0.81.0",
+    "react-native": "0.81.1",
     "react-native-calendars": "^1.1313.0",
     "react-native-camera-kit": "^15.1.0",
     "react-native-crisp-chat-sdk": "^0.16.1",

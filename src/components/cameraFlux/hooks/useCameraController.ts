@@ -12,24 +12,23 @@ export const useCameraController = () => {
 
   const checkPermissions = async () => {
     const PCAM = PermissionsAndroid.PERMISSIONS.CAMERA;
-    const PRMI = PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES;
     const PRES = PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
     const PWES = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
     try {
       const status = 'granted';
 
       if (Platform.OS === 'android') {
-        const granted = await PermissionsAndroid.check(PRMI);
+        const granted = await PermissionsAndroid.check(PRES);
         if (Number(Platform.Version) >= 33) {
           if (status === 'granted' && granted) {
             setShowCamera(true);
           } else {
             const granted = await PermissionsAndroid.requestMultiple([
               PCAM,
-              PRMI,
+              PRES,
             ]);
             const isPermission =
-              granted[PCAM] === 'granted' && granted[PRMI] === 'granted';
+              granted[PCAM] === 'granted' && granted[PRES] === 'granted';
             setShowCamera(isPermission);
           }
         } else {
@@ -38,13 +37,11 @@ export const useCameraController = () => {
           } else {
             const granted = await PermissionsAndroid.requestMultiple([
               PCAM,
-              PRMI,
               PRES,
               PWES,
             ]);
             const isPermission =
               granted[PCAM] === 'granted' &&
-              granted[PRMI] === 'granted' &&
               granted[PRES] === 'granted' &&
               granted[PWES] === 'granted';
             setShowCamera(isPermission);

@@ -1,53 +1,73 @@
-import {Linking, SafeAreaView, StatusBar, StyleSheet, View} from 'react-native';
-import {BLUE_DARK} from '../../styles/colors';
+import {
+  Linking,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
+import { BLUE_DARK } from '../../styles/colors';
 import ContactButton from '../../components/contact.button';
-import {useConfiguration} from '../../hooks/useConfiguration';
+import { useConfiguration } from '../../hooks/useConfiguration';
+import { useModalError } from '../../hooks/useModalError';
 
 const ContactsLinkScreen = () => {
-  const {face, insta, linkdin, mail, phone, ytb} = useConfiguration();
+  const { face, insta, linkdin, mail, phone, ytb } = useConfiguration();
+  const { showModalError } = useModalError();
+
   const handleCall = async () => {
-    const url = phone?.val.trim() || '+524426688845';
-    await Linking.openURL(url);
+    const tel = phone?.val.trim() || '+524426688845';
+    const url = `tel:${tel}`;
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      showModalError('No se pudo abrir llamada');
+    }
   };
 
   const handleSendEmail = async () => {
     const email = mail?.val || 'info@sabinocc.com';
     const url = `mailto:${email}?subject=Contacto`;
-    await Linking.openURL(url);
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      showModalError('No se pudo abrir mail');
+    }
   };
 
   const handleSendWhatsapp = async () => {
-    const tel = phone?.val.trim() || '+524426688845';
+    const tel = phone?.val.trim().replace(/\D/g, '') || '524426688845';
     const url = `whatsapp://send?phone=${tel}`;
-    await Linking.openURL(url);
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      await Linking.openURL(`https://wa.me/${tel}`);
+    }
   };
 
   const handleOpenFacebook = async () => {
+    console.log('face?.val:', face?.val);
     const profile = face?.val || 'SabinoConstruyendoComunidades';
-    const url = `fb://profile/${profile}`;
-    const support = await Linking.canOpenURL(url);
-    if (support) {
-      await Linking.openURL(url);
-    } else {
-      await Linking.openURL(profile);
-    }
+    const urlApp = `fb://profile/${profile}`;
+    const urlWeb = `https://www.facebook.com/${face?.val}`;
+    const support = await Linking.canOpenURL(urlWeb);
+    await Linking.openURL(urlWeb);
+  };
+
+  const handleOpenInstagram = async () => {
+    const profile = insta?.val || 'sabinocc_';
+    const urlApp = `instagram://user?username=${profile}`;
+    const urlWeb = `https://www.instagram.com/${insta?.val}`;
+    const support = await Linking.canOpenURL(urlApp);
+    await Linking.openURL(support ? urlApp : urlWeb);
   };
 
   const handleOpenYoutube = async () => {
     const profile = ytb?.val || '';
     const support = await Linking.canOpenURL(profile);
     if (support) {
-      await Linking.openURL(profile);
-    }
-  };
-
-  const handleOpenInstagram = async () => {
-    const profile = insta?.val || 'sabinocc_';
-    const url = `instagram://user?username=${profile}`;
-    const support = await Linking.canOpenURL(url);
-    if (support) {
-      await Linking.openURL(url);
-    } else {
       await Linking.openURL(profile);
     }
   };
@@ -91,7 +111,7 @@ const ContactsLinkScreen = () => {
           onPress={handleSendWhatsapp}
         />
       </View>
-      <View style={{...style.grid, marginTop: 16}}>
+      <View style={{ ...style.grid, marginTop: 16 }}>
         <ContactButton
           iconName="facebook"
           description="Facebook"
@@ -108,7 +128,7 @@ const ContactsLinkScreen = () => {
           onPress={handleOpenLinkedin}
         />
       </View>
-      <View style={{...style.grid, marginTop: 16}}>
+      <View style={{ ...style.grid, marginTop: 16 }}>
         <ContactButton
           iconName="youtube"
           description="Youtube"

@@ -4,3 +4,7 @@ export enum ChannelIds {
 export enum ChannelNames {
   NOTIFICATION = 'notification',
 }
+
+export enum NotificationActions {
+  OPEN_CHAT = 'open-chat',
+}

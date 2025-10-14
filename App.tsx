@@ -10,7 +10,7 @@ import {
 } from './src/redux/slicer/session.slicer';
 import { EStorage } from './src/enums/storage.enum';
 import { Button, Modal, PaperProvider, Portal } from 'react-native-paper';
-import { StyleSheet, Text } from 'react-native';
+import { Alert, StyleSheet, Text } from 'react-native';
 import { BLUE_DARK } from './src/styles/colors';
 import { jwtDecode } from 'jwt-decode';
 import GlobalLoader from './src/components/globalLoader';
@@ -18,13 +18,10 @@ import ModalErrors from './src/components/modal.errors';
 import { NewtworkInformation } from './src/components/NetworkInformation';
 import { configure } from 'react-native-crisp-chat-sdk';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import notifee, { AndroidImportance } from '@notifee/react-native';
-import { ChannelIds, ChannelNames } from './src/core/notifications/enums';
-import { usePushNotifications } from './src/hooks/notification/usePushNotifications';
+import { navigationRef } from './src/routes/rootnavigation';
 
 function App(): React.JSX.Element {
   const [showModal, setShowModal] = useState(false);
-  const { tokenPhone } = usePushNotifications();
 
   const initApp = useCallback(async () => {
     try {
@@ -47,8 +44,6 @@ function App(): React.JSX.Element {
     }
   }, []);
 
-  console.log('tokenPhone:', tokenPhone);
-
   const handleClear = async () => {
     await storage.remove({ key: EStorage.login });
     setShowModal(false);
@@ -58,6 +53,7 @@ function App(): React.JSX.Element {
   useEffect(() => {
     initApp();
     configure('4d23d2a2-9706-4f80-a587-782a4e5fb975');
+
     const unsubscribe = setInterval(async () => {
       const token = store.getState().session.token;
       const decode = jwtDecode(token);
@@ -70,19 +66,11 @@ function App(): React.JSX.Element {
     return () => clearInterval(unsubscribe);
   });
 
-  useEffect(() => {
-    notifee.createChannel({
-      id: ChannelIds.NOTIFICATION,
-      name: ChannelNames.NOTIFICATION,
-      importance: AndroidImportance.HIGH,
-    });
-  }, []);
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider>
         <Provider store={store}>
-          <NavigationContainer>
+          <NavigationContainer ref={navigationRef}>
             <ModalErrors />
             <GlobalLoader />
             <AppRoutes />
