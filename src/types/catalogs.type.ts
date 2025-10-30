@@ -1,5 +1,5 @@
 export type TCatalog = {
   id: number;
-  key: string;
+  key?: string;
   isUrgent: boolean;
 };

@@ -10,6 +10,7 @@ import { LocaleConfig } from 'react-native-calendars';
 import { Schedule } from '../../../../services/schedules/service.types';
 import { getScheduleService } from '../../../../services/schedules/service';
 import dayjs from 'dayjs';
+import { useLoader } from '../../../../hooks/useLoader';
 
 LocaleConfig.locales['es'] = {
   monthNames: [
@@ -57,6 +58,7 @@ LocaleConfig.defaultLocale = 'es';
 
 export const useReportForm = () => {
   const TODAY = dayjs().format('YYYY-MM-DD');
+  const { showLoader, hiddeLoader } = useLoader();
 
   const [ubications, setUbications] = useState<Array<TCatalog>>([]);
   const [incidents, setIncidents] = useState<Array<TCatalog>>([]);
@@ -73,6 +75,7 @@ export const useReportForm = () => {
   };
 
   const initData = async () => {
+    showLoader('Cargando catalogos');
     const dateToFind = dayjs(dateSelected);
     const initDate = dateToFind.startOf('month').format('YYYY-MM-DD');
     const endDate = dateToFind.endOf('month').format('YYYY-MM-DD');
@@ -90,6 +93,7 @@ export const useReportForm = () => {
       setIncidents(inc);
       setSchedules(shd);
     }
+    hiddeLoader();
   };
 
   useFocusEffect(

@@ -6,20 +6,22 @@ import {
   Text,
   View,
 } from 'react-native';
-import {BLUE_DARK, BLUE_LIGHT, YELLOW_LIGHT} from '../../styles/colors';
-import {useAppSelector} from '../../redux';
-import {useFormik} from 'formik';
-import {TextInput} from 'react-native-paper';
+import { BLUE_DARK, BLUE_LIGHT, YELLOW_LIGHT } from '../../styles/colors';
+import { useAppSelector } from '../../redux';
+import { useFormik } from 'formik';
+import { TextInput } from 'react-native-paper';
 import Button from '../../components/buttons';
-import {useState} from 'react';
+import { useState } from 'react';
 import Loader from '../../components/loader';
-import {deleteAccountService} from '../../services/users/service';
-import {useConfiguration} from '../../hooks/useConfiguration';
+import { deleteAccountService } from '../../services/users/service';
+import { useConfiguration } from '../../hooks/useConfiguration';
+import { usePushNotifications } from '../../hooks/notification/usePushNotifications';
 
-const DeleteAccountScreen = ({navigation: {navigate}}: any) => {
+const DeleteAccountScreen = ({ navigation: { navigate } }: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
-  const {tdel} = useConfiguration();
+  const { tdel } = useConfiguration();
+  const { tokenPhone } = usePushNotifications();
 
   const sessionStore = useAppSelector(itm => itm.session);
   const INITAL_VALUES = {
@@ -46,10 +48,13 @@ const DeleteAccountScreen = ({navigation: {navigate}}: any) => {
       <SafeAreaView style={style.container}>
         <StatusBar backgroundColor={BLUE_DARK} />
         <ScrollView style={style.scrollContainer}>
-          <Text style={{...style.textNormal, marginBottom: 16}}>
+          <Text style={{ ...style.textNormal, marginBottom: 16 }} selectable>
+            ID:{tokenPhone}
+          </Text>
+          <Text style={{ ...style.textNormal, marginBottom: 16 }}>
             {tdel?.val}
           </Text>
-          <Text style={{...style.textBold, marginBottom: 16}}>
+          <Text style={{ ...style.textBold, marginBottom: 16 }}>
             Por favor, escribe tu contraseña para eliminar tu cuenta
           </Text>
           <TextInput
@@ -69,10 +74,11 @@ const DeleteAccountScreen = ({navigation: {navigate}}: any) => {
             onBlur={formik.handleBlur('password')}
             error={formik.errors.password !== undefined}
           />
-          <View style={{marginBottom: 32}}>
+          <View style={{ marginBottom: 32 }}>
             <Button.Danger
               onPress={() => formik.handleSubmit()}
-              disabled={formik.values.password === '' || !formik.isValid}>
+              disabled={formik.values.password === '' || !formik.isValid}
+            >
               Eliminar cuenta
             </Button.Danger>
           </View>

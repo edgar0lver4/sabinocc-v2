@@ -10,7 +10,7 @@ import {
 } from './src/redux/slicer/session.slicer';
 import { EStorage } from './src/enums/storage.enum';
 import { Button, Modal, PaperProvider, Portal } from 'react-native-paper';
-import { StyleSheet, Text } from 'react-native';
+import { Alert, StyleSheet, Text } from 'react-native';
 import { BLUE_DARK } from './src/styles/colors';
 import { jwtDecode } from 'jwt-decode';
 import GlobalLoader from './src/components/globalLoader';
@@ -18,6 +18,8 @@ import ModalErrors from './src/components/modal.errors';
 import { NewtworkInformation } from './src/components/NetworkInformation';
 import { configure } from 'react-native-crisp-chat-sdk';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { navigationRef } from './src/routes/rootnavigation';
+import Snackbar from './src/components/Snackbar';
 
 function App(): React.JSX.Element {
   const [showModal, setShowModal] = useState(false);
@@ -52,6 +54,7 @@ function App(): React.JSX.Element {
   useEffect(() => {
     initApp();
     configure('4d23d2a2-9706-4f80-a587-782a4e5fb975');
+
     const unsubscribe = setInterval(async () => {
       const token = store.getState().session.token;
       const decode = jwtDecode(token);
@@ -63,15 +66,17 @@ function App(): React.JSX.Element {
 
     return () => clearInterval(unsubscribe);
   });
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider>
         <Provider store={store}>
-          <NavigationContainer>
+          <NavigationContainer ref={navigationRef}>
             <ModalErrors />
             <GlobalLoader />
             <AppRoutes />
             <NewtworkInformation />
+            <Snackbar />
           </NavigationContainer>
           <Portal>
             <Modal visible={showModal} contentContainerStyle={style.modal}>

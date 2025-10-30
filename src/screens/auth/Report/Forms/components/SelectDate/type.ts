@@ -13,4 +13,5 @@ export type Props = {
   listDates?: Array<Schedule>;
   onConfirm: (val: SelectDateTime) => void;
   datesDisabled?: (SelectDateTime | undefined)[];
+  disabled?: boolean;
 };

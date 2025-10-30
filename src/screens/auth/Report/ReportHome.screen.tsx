@@ -1,52 +1,53 @@
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import {
   BLUE_DARK,
   BLUE_LIGHT,
   DANGER,
   DANGER_DARK,
 } from '../../../styles/colors';
-import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
+import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 import ReportNotificationsScreen from './Tabs/RoportNotifications.screen';
 import ReportIncidentScreen from './Tabs/ReportIncidents.screen';
-import {useCallback, useState} from 'react';
+import { useCallback, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {TNotification, TReport} from '../../../types/report.type';
+import { TNotification, TReport } from '../../../types/report.type';
 import ReportVisitScreen from './Tabs/ReportVisits.screen';
 import {
   getReportService,
   getReptNotService,
 } from '../../../services/reports/service';
-import {useFocusEffect} from '@react-navigation/native';
-import {Button} from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
+import { Button } from 'react-native-paper';
 import Loader from '../../../components/loader';
-import {useAppDispatch, useAppSelector} from '../../../redux';
-import {closeLoader} from '../../../redux/slicer/loader.slicer';
+import { useAppDispatch, useAppSelector } from '../../../redux';
+import { closeLoader } from '../../../redux/slicer/loader.slicer';
 import Header from '../../../components/header';
-import {RoutesName} from '../../../routes/names.enum';
+import { RoutesName } from '../../../routes/names.enum';
+import { AppButton } from './Forms/components/Buttons';
 
 const renderTabBar = (props: any) => (
   <TabBar
     {...props}
-    indicatorStyle={{backgroundColor: 'white'}}
-    renderLabel={({route, focused, color}) => {
-      return <Text style={{color, fontSize: 12}}>{route.title}</Text>;
+    indicatorStyle={{ backgroundColor: 'white' }}
+    renderLabel={({ route, focused, color }) => {
+      return <Text style={{ color, fontSize: 12 }}>{route.title}</Text>;
     }}
-    renderIcon={({focused, color}) => (
+    renderIcon={({ focused, color }) => (
       <Icon name={focused ? 'circle' : 'circle-o'} color={color} />
     )}
     style={style.tabBar}
   />
 );
 
-const ReportHomeScreen = ({navigation: {navigate}}: any) => {
+const ReportHomeScreen = ({ navigation: { navigate } }: any) => {
   const [index, setIndex] = useState(0);
   const [notiList, setNotiList] = useState<Array<TNotification>>([]);
   const [repList, setRepList] = useState<Array<TReport>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [routes] = useState([
-    {key: 'first', title: 'Notificaciones'},
-    {key: 'second', title: 'Incidentes'},
-    {key: 'three', title: 'Visitas'},
+    { key: 'first', title: 'Notificaciones' },
+    { key: 'second', title: 'Incidentes' },
+    { key: 'three', title: 'Visitas' },
   ]);
   const sessionStore = useAppSelector(store => store.session.selectedProperty);
   const dispatch = useAppDispatch();
@@ -64,7 +65,7 @@ const ReportHomeScreen = ({navigation: {navigate}}: any) => {
   };
 
   const handleGoto = (id: string) => {
-    navigate('ReportShow', {id: id});
+    navigate('ReportShow', { id: id });
   };
 
   const handlGotoProfile = () => navigate(RoutesName.PROFILE);
@@ -109,20 +110,20 @@ const ReportHomeScreen = ({navigation: {navigate}}: any) => {
             <Text style={style.cardDescription}>Incidentes Reportados</Text>
           </View>
         </View>
-        <Button
-          mode="contained"
-          buttonColor={DANGER_DARK}
-          onPress={() => navigate('Report')}>
-          <Icon name="home" size={18} />
-          Reportar Incidente
-        </Button>
+        <AppButton
+          variant="DANGER"
+          label="Reportar Incidente"
+          onPress={() => navigate('Report')}
+          iconName="home"
+          style={{ justifyContent: 'center' }}
+        />
         <TabView
-          navigationState={{index, routes}}
+          navigationState={{ index, routes }}
           renderTabBar={renderTabBar}
           renderScene={renderScene}
           onIndexChange={setIndex}
-          style={{marginTop: 16}}
-          initialLayout={{height: 750}}
+          style={{ marginTop: 16 }}
+          initialLayout={{ height: 750 }}
         />
       </View>
     </SafeAreaView>

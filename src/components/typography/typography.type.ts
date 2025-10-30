@@ -1,3 +1,4 @@
 export type TTypography = {
-  children: string | string[];
+  children: string | string[] | undefined;
+  color?: string;
 };
