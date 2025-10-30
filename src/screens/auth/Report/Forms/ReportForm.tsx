@@ -5,8 +5,14 @@ import { styles } from './style';
 import { ThemeProp } from 'react-native-paper/lib/typescript/types';
 import { useReportCalendar } from '../hooks/useReportCalendar';
 import { SelectDate } from './components/SelectDate';
+import { useMemo } from 'react';
 
-const ReportForm = ({ formik, listDates, handleActiveOptions }: FormReport) => {
+const ReportForm = ({
+  formik,
+  listDates,
+  reports,
+  handleActiveOptions,
+}: FormReport) => {
   const { daysMarket, dateT1, dateT2, dateT3, handleSetValue } =
     useReportCalendar(formik);
   const themeInput: ThemeProp = {
@@ -16,6 +22,11 @@ const ReportForm = ({ formik, listDates, handleActiveOptions }: FormReport) => {
   };
 
   const listDisabled = [dateT1, dateT2, dateT3];
+
+  const isDisabledDate = useMemo(() => {
+    if (reports.length >= 1) return true;
+    return false;
+  }, [reports]);
 
   return (
     <>
@@ -42,26 +53,18 @@ const ReportForm = ({ formik, listDates, handleActiveOptions }: FormReport) => {
         activeUnderlineColor="#fff"
         underlineColor="#fff"
         underlineColorAndroid="#fff"
+        value={formik.values.descripcion}
         onChangeText={formik.handleChange('descripcion')}
         onBlur={formik.handleBlur('descripcion')}
       />
-      {1 - Object.keys(daysMarket).length !== 0 ? (
-        <Text style={styles.description}>
-          Seleccione {1 - Object.keys(daysMarket).length} fechas para la
-          revisión
-        </Text>
-      ) : (
-        <Text style={styles.description}>
-          Fechas seleccionadas de forma exitosa
-        </Text>
-      )}
       <SelectDate
-        title="Seleccione una fecha"
+        title="Seleccione una fecha de revisión"
         onConfirm={val => handleSetValue(val, 'horario_cliente_1')}
         value={dateT1}
-        style={{ marginTop: 16, marginBottom: 16 }}
+        style={{ marginBottom: 16 }}
         listDates={listDates}
         datesDisabled={listDisabled}
+        disabled={isDisabledDate}
       />
     </>
   );

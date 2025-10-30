@@ -111,6 +111,8 @@ export const useReportCamara = (formik: FormikProps<TFormikReport>) => {
     formik.setFieldValue('adjuntos', null);
   };
 
+  const resetImage = () => setImgBase64('');
+
   return {
     showCamera,
     showPreview,
@@ -121,5 +123,6 @@ export const useReportCamara = (formik: FormikProps<TFormikReport>) => {
     setShowCamera,
     confirm,
     retake,
+    resetImage,
   };
 };

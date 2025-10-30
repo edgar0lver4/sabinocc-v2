@@ -19,6 +19,7 @@ import { NewtworkInformation } from './src/components/NetworkInformation';
 import { configure } from 'react-native-crisp-chat-sdk';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { navigationRef } from './src/routes/rootnavigation';
+import Snackbar from './src/components/Snackbar';
 
 function App(): React.JSX.Element {
   const [showModal, setShowModal] = useState(false);
@@ -75,6 +76,7 @@ function App(): React.JSX.Element {
             <GlobalLoader />
             <AppRoutes />
             <NewtworkInformation />
+            <Snackbar />
           </NavigationContainer>
           <Portal>
             <Modal visible={showModal} contentContainerStyle={style.modal}>

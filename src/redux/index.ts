@@ -3,6 +3,7 @@ import sessionStore from './slicer/session.slicer';
 import loaderStore from './slicer/loader.slicer';
 import errorStore from './slicer/errors.slicer';
 import operatorStore from './slicer/operator.slicer';
+import snackbarStore from './slicer/snackbar.slicer';
 import { useDispatch, useSelector } from 'react-redux';
 
 const store = configureStore({
@@ -11,6 +12,7 @@ const store = configureStore({
     loader: loaderStore,
     errors: errorStore,
     operator: operatorStore,
+    snackbar: snackbarStore,
   },
 });
 

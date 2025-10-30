@@ -14,83 +14,51 @@ import {
   STEEL_50,
   YELLOW_LIGHT,
 } from '../../../styles/colors';
-import {useCallback, useState} from 'react';
+import { useCallback, useState } from 'react';
 import {
   getIncidentType,
   getIncidentUbication,
 } from '../../../services/catalogs/service';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import Select from '../../../components/select';
-import {useFormik} from 'formik';
-import {TextInput} from 'react-native-paper';
-import {TFormikReport} from '../../../types/report.type';
-import {getReportById} from '../../../services/reports/service';
+import { useFormik } from 'formik';
+import { TextInput } from 'react-native-paper';
+import { TFormikReport, TReport } from '../../../types/report.type';
+import { getReportById } from '../../../services/reports/service';
 import Loader from '../../../components/loader';
 import LabelForm from '../../../components/label';
-import {dateISO} from '../../../utils/format';
+import { dateISO } from '../../../utils/format';
 import Header from '../../../components/header';
-import {useAppSelector} from '../../../redux';
-import {RoutesName} from '../../../routes/names.enum';
+import { useAppSelector } from '../../../redux';
+import { RoutesName } from '../../../routes/names.enum';
+import { useSnackbar } from '../../../hooks/useSnackbar';
+import { ReportShowSingle } from './views/ReportShowSingle';
+import { ReportShowMultiple } from './views/ReportShowMultiple';
+import { BottomSheetModalContext } from '@gorhom/bottom-sheet/lib/typescript/contexts';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { useLoader } from '../../../hooks/useLoader';
 
-const ReportShowScreen = ({navigation: {navigate}, route: {params}}: any) => {
+const ReportShowScreen = ({
+  navigation: { navigate },
+  route: { params },
+}: any) => {
   const ID_REPORT = params.id;
-  const [capturedPhoto, setCapturedPhoto] = useState('');
-  const [isLoader, setIsLoader] = useState(false);
+  const [reports, setReports] = useState<TReport[]>([]);
+  const { showSnackbar } = useSnackbar();
+  const { hiddeLoader, showLoader } = useLoader();
 
   const sessionStore = useAppSelector(store => store.session.selectedProperty);
   const subtitle = `Casa ${sessionStore?.name} - ${sessionStore?.proyecto}`;
 
-  const INITAL_STATE = {
-    area_vivienda: {label: '', value: ''},
-    tipo_reporte: {label: '', value: ''},
-    descripcion: '',
-    evaluationDate: '',
-    nextWorkDate: '',
-    adjuntos: null,
-  };
-
-  const formik = useFormik({
-    initialValues: INITAL_STATE,
-    onSubmit: () => {},
-  });
-
   const initApp = async () => {
-    setIsLoader(true);
-    const incidentsList = await getIncidentType();
-    const ubicationsList = await getIncidentUbication();
-    const report = await getReportById(ID_REPORT);
-    const [inc, ubc] = await Promise.all([incidentsList, ubicationsList]);
-    if (inc.length > 0 && ubc.length > 0 && !!report) {
-      const strUbic = report.tipoArea;
-      const strRepo = report.tipoReporte;
-      const findUbc = ubicationsList.find(itm => itm.key === strUbic);
-      const findRep = incidentsList.find(itm => itm.key === strRepo);
-      const evalDate = !!report.evaluationDate
-        ? dateISO(report.evaluationDate)
-        : 'Sin fecha de evaluación';
-      const repaDate = !!report.nextWorkDate
-        ? dateISO(report.nextWorkDate)
-        : 'Sin fecha de reparación';
-      formik.setFieldValue('evaluationDate', evalDate);
-      formik.setFieldValue('nextWorkDate', repaDate);
-      formik.setFieldValue('descripcion', report.descripcion);
-      if (findUbc)
-        formik.setFieldValue('area_vivienda', {
-          label: findUbc.key,
-          value: findUbc.id,
-        });
-
-      if (findRep)
-        formik.setFieldValue('tipo_reporte', {
-          label: findRep.key,
-          value: findRep.id,
-        });
-
-      if (report.files?.[0]) setCapturedPhoto(report.files?.[0]?.url);
-    } else {
-      Alert.alert('Fallo al obtener la información del ticket');
+    showLoader('Cargando reportes');
+    try {
+      const report = await getReportById(ID_REPORT);
+      if (report) setReports(report);
+    } catch (e) {
+      showSnackbar('No se pudo cargar el reporte', 3, 'error');
     }
-    setIsLoader(false);
+    hiddeLoader();
   };
 
   useFocusEffect(
@@ -100,77 +68,23 @@ const ReportShowScreen = ({navigation: {navigate}, route: {params}}: any) => {
   );
 
   return (
-    <SafeAreaView style={style.container}>
-      {isLoader && <Loader title="Cargando reporte" />}
-      <Header
-        title={`Reporte ${ID_REPORT}`}
-        handleLogout={() => navigate(RoutesName.REPORT_HOME)}
-        variant="subscreen"
-        subtitle={subtitle}
-      />
-      <ScrollView style={style.scrollContainer}>
-        <Select
-          title="Seleccione el tipo de incidente"
-          value={formik.values.tipo_reporte.label.toString()}
-          style={{marginTop: 16}}
-          onActive={() => {}}
+    <BottomSheetModalProvider>
+      <SafeAreaView style={style.container}>
+        <Header
+          title={`Reporte ${ID_REPORT}`}
+          handleLogout={() => navigate(RoutesName.REPORT_HOME)}
+          variant="subscreen"
+          subtitle={subtitle}
         />
-        <Select
-          title="Seleccione la ubicación"
-          value={formik.values.area_vivienda.label.toString()}
-          style={{marginTop: 16}}
-          onActive={() => {}}
-        />
-        <TextInput
-          label="Descripción de lo sucedido"
-          multiline
-          numberOfLines={3}
-          mode="flat"
-          value={formik.values.descripcion}
-          theme={{
-            colors: {
-              onSurfaceVariant: 'white',
-              onSurfaceDisabled: 'white',
-            },
-          }}
-          style={{
-            marginVertical: 16,
-            backgroundColor: BLUE_DARK,
-            color: '#fff',
-          }}
-          textColor="#fff"
-          activeUnderlineColor="#fff"
-          underlineColor="#fff"
-          underlineColorAndroid="#fff"
-          onChangeText={formik.handleChange('descripcion')}
-          onBlur={formik.handleBlur('descripcion')}
-          disabled
-        />
-        <LabelForm
-          title="Fecha de evaluación"
-          value={formik.values.evaluationDate}
-        />
-        <LabelForm
-          title="Fecha de reparación"
-          value={formik.values.nextWorkDate}
-          style={{marginVertical: 16}}
-        />
-        {capturedPhoto !== '' && (
-          <View style={{marginBottom: 16}}>
-            <Text style={style.description}>Imagen de referencia</Text>
-            <Image
-              source={{uri: capturedPhoto}}
-              style={{width: 200, height: 200, marginTop: 16}}
-              onLoad={() => (
-                <View>
-                  <Text>Cargando</Text>
-                </View>
-              )}
-            />
-          </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+        <ScrollView style={style.scrollContainer}>
+          {reports.length === 1 ? (
+            <ReportShowSingle report={reports[0]} />
+          ) : (
+            <ReportShowMultiple reports={reports} />
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    </BottomSheetModalProvider>
   );
 };
 

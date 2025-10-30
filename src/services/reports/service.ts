@@ -1,9 +1,10 @@
-import {Alert} from 'react-native';
+import { Alert } from 'react-native';
 import FetchPetition from '..';
 import store from '../../redux';
-import {TFormikReport, TNotification, TReport} from '../../types/report.type';
-import {POSTSELLS_URL} from '../../utils/urls';
-import {showErrorModalRdx} from '../../redux/slicer/errors.slicer';
+import { TFormikReport, TNotification, TReport } from '../../types/report.type';
+import { POSTSELLS_URL } from '../../utils/urls';
+import { showErrorModalRdx } from '../../redux/slicer/errors.slicer';
+import { ReportRequest } from './types';
 
 export const getReportService = async (): Promise<Array<TReport>> => {
   try {
@@ -47,7 +48,7 @@ export const getReptNotService = async (): Promise<Array<TNotification>> => {
   }
 };
 
-export const getReportById = async (id: string): Promise<TReport | null> => {
+export const getReportById = async (id: string): Promise<TReport[] | null> => {
   try {
     const token = store.getState().session.token;
     const fetching = new FetchPetition(token, true);
@@ -55,20 +56,22 @@ export const getReportById = async (id: string): Promise<TReport | null> => {
       `${POSTSELLS_URL}/GetTicketWarranty?folio=${id}`,
     );
     const response: any = await petition.json();
-    const data: TReport = response.data[0];
+    const data: TReport[] = response.data;
     if (!!data) {
       return data;
     }
     return null;
   } catch (e) {
-    console.log('Error:', e);
-    return null;
+    throw e;
   }
 };
 
+/**
+ *@deprecated use  createReportSeriviceV2
+ */
 export const createReportSerivice = async (
   data: TFormikReport,
-): Promise<null | {id: string; error: string; status: number}> => {
+): Promise<null | { id: string; error: string; status: number }> => {
   try {
     const h1 = data.horario_cliente_1 === '' ? null : data.horario_cliente_1;
     const h2 = data.horario_cliente_2 === '' ? null : data.horario_cliente_2;
@@ -100,17 +103,51 @@ export const createReportSerivice = async (
     });
     const id = await request.text();
     if (request.status === 200) {
-      return {id: id, error: '', status: request.status};
+      return { id: id, error: '', status: request.status };
     } else {
       store.dispatch(
-        showErrorModalRdx({isOpen: true, title: id, status: request.status}),
+        showErrorModalRdx({ isOpen: true, title: id, status: request.status }),
       );
     }
-    return {id: '', error: id, status: request.status};
+    return { id: '', error: id, status: request.status };
   } catch (e) {
     console.log('Error en el servicio createReportSerivice:', e);
     store.dispatch(
-      showErrorModalRdx({isOpen: true, title: String(e), status: 0}),
+      showErrorModalRdx({ isOpen: true, title: String(e), status: 0 }),
+    );
+    return null;
+  }
+};
+
+export const createReportSeriviceV2 = async (
+  data: ReportRequest[],
+): Promise<null | { id: string; error: string; status: number }> => {
+  try {
+    const token = store.getState().session.token;
+    const header = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'X-API-Version': 2.0,
+    };
+    console.log('val:', data);
+    const request = await fetch(`${POSTSELLS_URL}/AddTicketWarrantyB64`, {
+      headers: header,
+      body: JSON.stringify(data),
+      method: 'POST',
+    });
+    const id = await request.text();
+    if (request.status === 200) {
+      return { id: id, error: '', status: request.status };
+    } else {
+      store.dispatch(
+        showErrorModalRdx({ isOpen: true, title: id, status: request.status }),
+      );
+    }
+    return { id: '', error: id, status: request.status };
+  } catch (e) {
+    console.log('Error en el servicio createReportSerivice:', e);
+    store.dispatch(
+      showErrorModalRdx({ isOpen: true, title: String(e), status: 0 }),
     );
     return null;
   }

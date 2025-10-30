@@ -20,6 +20,7 @@ export const SelectDate = ({
   value,
   datesDisabled,
   onConfirm,
+  disabled,
 }: Props) => {
   const DATE_SELECT = value?.date || '';
   const HOUR_SELECT = value?.time || '';
@@ -138,7 +139,11 @@ export const SelectDate = ({
 
   return (
     <>
-      <TouchableOpacity style={[styles.container, style]} onPress={openBottom}>
+      <TouchableOpacity
+        style={[styles.container, style]}
+        onPress={openBottom}
+        disabled={disabled}
+      >
         <Text style={VALUE_STR !== '' ? styles.titleActive : styles.title}>
           {title}
         </Text>
