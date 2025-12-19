@@ -42,4 +42,9 @@ export const style = StyleSheet.create({
     marginTop: 16,
     marginBottom: 8,
   },
+  bellView: {
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    position: 'relative',
+  },
 });

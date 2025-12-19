@@ -1,7 +1,7 @@
 import FetchPetition from '..';
 import store from '../../redux';
-import {TCatalog} from '../../types/catalogs.type';
-import {CATALOGS_URL} from '../../utils/urls';
+import { TCatalog } from '../../types/catalogs.type';
+import { CATALOGS_URL } from '../../utils/urls';
 
 export const getIncidentType = async (): Promise<Array<TCatalog>> => {
   try {
@@ -29,6 +29,25 @@ export const getIncidentUbication = async (): Promise<Array<TCatalog>> => {
     const response: any = await petition.json();
     const data: Array<TCatalog> = response.data;
     return data;
+  } catch (e) {
+    console.log('Error:', e);
+    return [];
+  }
+};
+
+export const getOperatorOptions = async (): Promise<Array<TCatalog>> => {
+  try {
+    const token = store.getState().session.token;
+    const fetching = new FetchPetition(token, true);
+    const petition: any = await fetching.get(
+      `${CATALOGS_URL}/ListOperatorOptions`,
+    );
+    const response: any = await petition.json();
+    const data: Array<TCatalog> = response.data;
+    if (data) {
+      return data;
+    }
+    return [];
   } catch (e) {
     console.log('Error:', e);
     return [];

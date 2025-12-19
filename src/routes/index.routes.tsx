@@ -32,6 +32,7 @@ import ListPropertiesScreen from '../screens/auth/Operator/ListProperties';
 import ProfileOperatorScreen from '../screens/auth/Operator/ProfileOperator';
 import TicketOperatorScreen from '../screens/auth/Operator/TicketOperator';
 import { usePushNotifications } from '../hooks/notification/usePushNotifications';
+import { NotificationListScreen } from '../screens/auth/Notifications';
 
 const Stack = createStackNavigator();
 
@@ -102,6 +103,11 @@ const AuthRoutes = () => {
         component={ChatScreen}
       />
       <Stack.Screen
+        options={{ headerShown: false }}
+        name={RoutesName.NOTIFICATION}
+        component={NotificationListScreen}
+      />
+      <Stack.Screen
         options={{
           title: '',
           headerStyle: { backgroundColor: BLUE_DARK },
@@ -162,7 +168,7 @@ const AuthRoutes = () => {
           headerStyle: { backgroundColor: BLUE_DARK },
           headerTintColor: '#fff',
         }}
-        name="Activity"
+        name={RoutesName.ACTIVITY}
         component={ActivityScreen}
       />
       <Stack.Screen
@@ -172,7 +178,7 @@ const AuthRoutes = () => {
       />
       <Stack.Screen
         options={{ headerShown: false }}
-        name="MyExpedient"
+        name={RoutesName.MY_EXPEDIENT}
         component={MyExpedientScreen}
       />
       <Stack.Screen

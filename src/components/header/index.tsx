@@ -1,8 +1,17 @@
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Animated,
+  Easing,
+  Image,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { Props } from './types';
 import { style } from './style';
-import { YELLOW_LIGHT } from '../../styles/colors';
+import { useBellAnimation } from './hooks/useBellAnimation';
+import { Bell } from './components/Bell';
 
 const Header = ({
   title,
@@ -20,8 +29,10 @@ const Header = ({
     variant === 'subscreen'
       ? style.imageSubscreenContainer
       : style.imageContainer;
+
   return (
     <View style={style.headerContainer}>
+      {variant === 'default' && <Bell />}
       <View style={imageContainerStyle}>
         {variant === 'subscreen' && (
           <TouchableOpacity onPress={handleLogout}>

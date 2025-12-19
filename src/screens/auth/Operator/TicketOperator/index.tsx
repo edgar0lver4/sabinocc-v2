@@ -14,16 +14,24 @@ import { AppButton } from '../../Report/Forms/components/Buttons';
 import { ThemeProp } from 'react-native-paper/lib/typescript/types';
 import { useState } from 'react';
 import { ModalAccpet } from './components/ModalAcept';
+import { Selector } from '../../../../components/Selector';
 
 const TicketOperatorScreen = () => {
   const [openModal, setOpenModal] = useState(false);
   const [comment, setComment] = useState('');
-  const { photos, onTakePhoto, handleReplyTicket, handleReplyAndCloseTicket } =
-    useTicketOperator();
+  const {
+    photos,
+    operatorOptions,
+    onTakePhoto,
+    handleReplyTicket,
+    handleReplyAndCloseTicket,
+  } = useTicketOperator();
   const { goBack } = useNavigation();
   const operatorStore = useAppSelector(store => store.operator);
   const sesionStore = useAppSelector(store => store.session);
   const toggleModal = () => setOpenModal(!openModal);
+
+  console.log('operatorOptions:', operatorOptions);
 
   const ticket = operatorStore.selectedTicket;
   const CREATE_AT = dayjs(ticket?.createDate).format('DD/MM/YYYY [a] HH:MM');
@@ -71,19 +79,10 @@ const TicketOperatorScreen = () => {
         </View>
         <FormOperator ticket={ticket} />
         <View style={style.photoViews}>
-          <TextInput
-            label="Comentarios"
-            mode="flat"
-            textColor="#fff"
-            activeUnderlineColor="#fff"
-            underlineColor="#fff"
-            underlineColorAndroid="#fff"
-            multiline
-            numberOfLines={3}
-            style={style.comments}
-            theme={themeInput}
-            value={comment}
-            onChangeText={val => setComment(val)}
+          <Selector
+            onSelect={val => setComment(val?.key || '')}
+            options={operatorOptions}
+            title="Comentarios"
           />
           <ImageVisor items={photos} />
         </View>

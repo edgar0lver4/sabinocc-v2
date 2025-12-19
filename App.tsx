@@ -20,30 +20,12 @@ import { configure } from 'react-native-crisp-chat-sdk';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { navigationRef } from './src/routes/rootnavigation';
 import Snackbar from './src/components/Snackbar';
+import { Splash } from './src/components/Splash';
+import { useIniitalConfiguration } from './src/hooks/data/useInitialConfiguration';
 
 function App(): React.JSX.Element {
   const [showModal, setShowModal] = useState(false);
-
-  const initApp = useCallback(async () => {
-    try {
-      const load = await storage.load({
-        key: EStorage.login,
-        autoSync: true,
-        syncInBackground: true,
-      });
-      if (load) {
-        store.dispatch(setSessionInfoRdx(load));
-        const decode = jwtDecode(load.token);
-        const expired = new Date(decode.exp || '').getTime();
-        const dataNow = Math.floor(new Date().getTime() / 1000);
-        const rest = expired - dataNow;
-        rest <= 0 && setShowModal(true);
-      }
-    } catch (e) {
-      const error: any = e;
-      console.log('Error:', error);
-    }
-  }, []);
+  const { initialize } = useIniitalConfiguration();
 
   const handleClear = async () => {
     await storage.remove({ key: EStorage.login });
@@ -52,7 +34,7 @@ function App(): React.JSX.Element {
   };
 
   useEffect(() => {
-    initApp();
+    initialize();
     configure('4d23d2a2-9706-4f80-a587-782a4e5fb975');
 
     const unsubscribe = setInterval(async () => {
@@ -74,6 +56,7 @@ function App(): React.JSX.Element {
           <NavigationContainer ref={navigationRef}>
             <ModalErrors />
             <GlobalLoader />
+            <Splash />
             <AppRoutes />
             <NewtworkInformation />
             <Snackbar />

@@ -1,4 +1,4 @@
-import {TOptions} from './select.type';
+import { TOptions } from './select.type';
 
 export type TReport = {
   numTicket: string;
@@ -12,6 +12,13 @@ export type TReport = {
   closedDate: string | null;
   nextWorkDate: string | null;
   files?: Array<any>;
+  movs?: ReportMoves[];
+};
+
+export type ReportMoves = {
+  dsc: string;
+  usr_alta: string;
+  fec_alta: string;
 };
 
 export type TNotification = {

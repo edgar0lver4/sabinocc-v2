@@ -7,77 +7,67 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Feather';
-import {BLUE, BLUE_DARK, BLUE_LIGHT, YELLOW_LIGHT} from '../../styles/colors';
+import { BLUE, BLUE_DARK, BLUE_LIGHT, YELLOW_LIGHT } from '../../styles/colors';
 import storage from '../../db/storage';
-import {useAppDispatch, useAppSelector} from '../../redux';
-import {closeSession} from '../../redux/slicer/session.slicer';
+import { useAppDispatch, useAppSelector } from '../../redux';
+import { closeSession } from '../../redux/slicer/session.slicer';
 import globalStyle from '../../styles/globals';
-import {useState} from 'react';
+import { useState } from 'react';
 import Loader from '../../components/loader';
 import MenuApp from '../../components/menu';
-import {EStorage} from '../../enums/storage.enum';
+import { EStorage } from '../../enums/storage.enum';
 import Typography from '../../components/typography';
 import DeviceInfo from 'react-native-device-info';
-import {useAccountInfo} from '../../hooks/useAccountInfo';
+import { useAccountInfo } from '../../hooks/useAccountInfo';
+import Header from '../../components/header';
 
-const ProfileScreen = ({navigation}: any) => {
+const ProfileScreen = ({ navigation }: any) => {
   const [isLoading, setIsLoading] = useState(false);
-  const {headerSub, isClient} = useAccountInfo();
+  const { headerSub, isClient } = useAccountInfo();
   const dispatch = useAppDispatch();
   const sessionStore = useAppSelector(itm => itm.session);
 
   const handleLogout = async () => {
     setIsLoading(true);
     dispatch(closeSession());
-    await storage.remove({key: EStorage.login});
+    await storage.remove({ key: EStorage.login });
     setIsLoading(false);
   };
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: BLUE_LIGHT}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: BLUE_LIGHT }}>
       <StatusBar backgroundColor={BLUE_DARK} />
-      <View style={style.headerContainer}>
-        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-          <Image
-            source={require('../../assets/logo_dorado.webp')}
-            style={{width: 56, height: 56}}
-          />
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}>
-          <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 18}}>
-            Bienvenido
-          </Text>
-          <TouchableOpacity onPress={handleLogout}>
-            <Icon name="log-out" color="#fff" size={32} />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <ScrollView style={{flex: 1}}>
+      <Header title="Bienvenido" handleLogout={handleLogout} />
+      <ScrollView style={{ flex: 1 }}>
         <View style={style.profileContainer}>
-          <View style={{paddingLeft: 16}}>
-            <Text style={{...globalStyle.typography_h1, color: YELLOW_LIGHT}}>
+          <View style={{ paddingLeft: 16 }}>
+            <Text style={{ ...globalStyle.typography_h1, color: YELLOW_LIGHT }}>
               {sessionStore.name}
             </Text>
             {isClient && (
               <Text
-                style={{...globalStyle.typography_body_regular, color: '#fff'}}>
+                style={{
+                  ...globalStyle.typography_body_regular,
+                  color: '#fff',
+                }}
+              >
                 {sessionStore.email}
               </Text>
             )}
             {isClient && (
               <Text
-                style={{...globalStyle.typography_body_regular, color: '#fff'}}>
+                style={{
+                  ...globalStyle.typography_body_regular,
+                  color: '#fff',
+                }}
+              >
                 {headerSub}
               </Text>
             )}
           </View>
         </View>
-        <View style={{flex: 1, backgroundColor: BLUE_LIGHT, padding: 16}}>
+        <View style={{ flex: 1, backgroundColor: BLUE_LIGHT, padding: 16 }}>
           <MenuApp navigation={navigation} type={sessionStore.type} />
         </View>
         <View style={style.footer}>

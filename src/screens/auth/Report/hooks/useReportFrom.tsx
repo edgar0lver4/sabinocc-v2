@@ -88,6 +88,7 @@ export const useReportForm = () => {
       ubicationsList,
       scheduleList,
     ]);
+
     if (inc.length > 0 && ubc.length > 0 && shd.length > 0) {
       setUbications(ubc);
       setIncidents(inc);

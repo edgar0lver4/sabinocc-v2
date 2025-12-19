@@ -43,7 +43,7 @@ const CameraFlux = ({ onConfirm }: Props) => {
   const handleRetake = () => {
     setShowPreview(false);
   };
-
+  console.log('showCamera:', showCamera);
   if (!showCamera)
     return (
       <CameraBtn onPress={checkPermissions} style={{ marginHorizontal: 16 }} />

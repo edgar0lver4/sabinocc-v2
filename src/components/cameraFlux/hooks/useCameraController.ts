@@ -18,7 +18,7 @@ export const useCameraController = () => {
       const status = 'granted';
 
       if (Platform.OS === 'android') {
-        const granted = await PermissionsAndroid.check(PRES);
+        const granted = await PermissionsAndroid.check(PCAM);
         if (Number(Platform.Version) >= 33) {
           if (status === 'granted' && granted) {
             setShowCamera(true);
@@ -27,9 +27,9 @@ export const useCameraController = () => {
               PCAM,
               PRES,
             ]);
-            const isPermission =
-              granted[PCAM] === 'granted' && granted[PRES] === 'granted';
-            setShowCamera(isPermission);
+            setShowCamera(
+              granted[PCAM] === 'granted' && granted[PRES] === 'granted',
+            );
           }
         } else {
           if (status === 'granted') {

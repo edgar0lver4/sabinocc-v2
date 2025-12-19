@@ -31,6 +31,7 @@ import { getConfigurations } from '../../services/config/service';
 import { useModalError } from '../../hooks/useModalError';
 import { UserType } from '../../core/users/enum';
 import { usePushNotifications } from '../../hooks/notification/usePushNotifications';
+import { useSplashScreen } from '../../hooks/useSplashScreen';
 
 const LoginScreen = ({ navigation }: any) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +40,7 @@ const LoginScreen = ({ navigation }: any) => {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const { showModalError } = useModalError();
   const { tokenPhone } = usePushNotifications();
-
+  const { hiddeSplash, showSplash } = useSplashScreen();
   const dispatch = useAppDispatch();
   // URL de la imagen de fondo
   const imageUrl =
@@ -58,7 +59,9 @@ const LoginScreen = ({ navigation }: any) => {
   const handleSubmit = async (e: typeof INITAL_VALUES) => {
     setIsLoading(true);
     Keyboard.dismiss();
+    showSplash('Cargando catalogos', true);
     const response = await loginService(e, tokenPhone);
+    console.log('tokenPhone:', tokenPhone);
     if (response) {
       const properties: Property[] = response.propiedades;
       const body = {
@@ -77,6 +80,7 @@ const LoginScreen = ({ navigation }: any) => {
       showModalError('Usario o contraseña invalido');
     }
     setIsLoading(false);
+    hiddeSplash();
   };
 
   const handleAnonym = () => {
@@ -98,39 +102,6 @@ const LoginScreen = ({ navigation }: any) => {
     initialValues: INITAL_VALUES,
     onSubmit: handleSubmit,
   });
-
-  const getConfig = async () => {
-    try {
-      const config = storage.load({
-        key: EStorage.settings,
-        autoSync: true,
-        syncInBackground: true,
-      });
-      if (!config.data) {
-        setShowFade(true);
-        const config = await getConfigurations();
-        storage.save({
-          key: EStorage.settings,
-          data: config,
-        });
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 4000,
-          useNativeDriver: true,
-        }).start();
-        setShowFade(false);
-      }
-    } catch (e) {
-      showModalError('Error al obtener la configuración');
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      setIsLoading(false);
-      getConfig();
-    }, []),
-  );
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

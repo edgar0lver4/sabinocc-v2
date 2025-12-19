@@ -7,6 +7,7 @@ import { BLUE_DARK, STEEL_WHITE } from '../../../../../styles/colors';
 import { useMemo } from 'react';
 import Typography from '../../../../../components/typography';
 import { dateISO } from '../../../../../utils/format';
+import { ReportHistoryContainer } from '../../components/ReportHistoryContainer';
 
 export const ReportShowSingle = ({ report }: Props) => {
   const capturedPhoto: string = useMemo(() => {
@@ -89,6 +90,7 @@ export const ReportShowSingle = ({ report }: Props) => {
           />
         </View>
       )}
+      <ReportHistoryContainer history={report.movs || []} />
     </>
   );
 };

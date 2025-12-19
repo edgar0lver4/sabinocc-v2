@@ -20,6 +20,7 @@ import { RoutesName } from './src/routes/names.enum';
 messaging().onNotificationOpenedApp(async remoteMessage => {
   const interval = setInterval(() => {
     if (navigationRef.isReady()) {
+      console.log('remoteMessage:', remoteMessage);
       clearInterval(interval);
       navigate(RoutesName.CHAT);
     }

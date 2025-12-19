@@ -4,6 +4,7 @@ import loaderStore from './slicer/loader.slicer';
 import errorStore from './slicer/errors.slicer';
 import operatorStore from './slicer/operator.slicer';
 import snackbarStore from './slicer/snackbar.slicer';
+import splashStore from './slicer/splash.slicer';
 import { useDispatch, useSelector } from 'react-redux';
 
 const store = configureStore({
@@ -13,6 +14,7 @@ const store = configureStore({
     errors: errorStore,
     operator: operatorStore,
     snackbar: snackbarStore,
+    splash: splashStore,
   },
 });
 

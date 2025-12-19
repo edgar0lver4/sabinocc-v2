@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { PhotoData } from '../../../../../components/cameraFlux/types';
 import { useAppSelector } from '../../../../../redux';
 import {
@@ -10,8 +10,11 @@ import { useLoader } from '../../../../../hooks/useLoader';
 import { useNavigation } from '@react-navigation/native';
 import { RoutesName } from '../../../../../routes/names.enum';
 import { Alert } from 'react-native';
+import { getOperatorOptions } from '../../../../../services/catalogs/service';
+import { TCatalog } from '../../../../../types/catalogs.type';
 
 export const useTicketOperator = () => {
+  const [operatorOptions, setOperatorOptions] = useState<TCatalog[]>([]);
   const [photos, setPhotos] = useState<PhotoData[]>([]);
   const { showModalError } = useModalError();
   const { hiddeLoader, showLoader } = useLoader();
@@ -29,7 +32,6 @@ export const useTicketOperator = () => {
     showLoader('Respondiendo ticket');
     try {
       const isSend = await replyTicket(idTicket, photos, comment);
-      console.log('isSend:', isSend);
       if (isSend) {
         navigate(RoutesName.PROFILE_OPERATOR);
         Alert.alert('Ticket respondido', 'Se respondio el ticket');
@@ -58,5 +60,28 @@ export const useTicketOperator = () => {
     hiddeLoader();
   };
 
-  return { photos, onTakePhoto, handleReplyTicket, handleReplyAndCloseTicket };
+  const obtainOperatorOptions = async () => {
+    const list = await getOperatorOptions();
+    if (list.length > 0) {
+      setOperatorOptions(list);
+    }
+  };
+
+  const initializers = useCallback(async () => {
+    showLoader('Cargando datos');
+    await obtainOperatorOptions();
+    hiddeLoader();
+  }, []);
+
+  useEffect(() => {
+    initializers();
+  }, []);
+
+  return {
+    photos,
+    operatorOptions,
+    onTakePhoto,
+    handleReplyTicket,
+    handleReplyAndCloseTicket,
+  };
 };
